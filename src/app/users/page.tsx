@@ -14,6 +14,7 @@ import {
 import { gatAllUsers } from "@/shared/service/users";
 import UsersTableRow from "@/shared/components/UsersTableRow";
 import UserModifyModal from "@/shared/components/UserModifyModal";
+import UserCreateModal from "@/shared/components/UserCreateModal";
 
 async function UsersPage() {
   const data = await gatAllUsers();
@@ -40,6 +41,7 @@ async function UsersPage() {
         </Table>
       </TableContainer>
       <UserModifyModal />
+      <UserCreateModal />
     </>
   );
 }

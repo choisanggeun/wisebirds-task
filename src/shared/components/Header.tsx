@@ -19,12 +19,17 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
+import { useAtom } from "jotai";
 
 import React from "react";
+import { authAtom } from "../atoms/auth.atom";
+import { Auth } from "../type/Auth";
 
 const navItems = ["캠페인", "사용자"];
 
 function Header() {
+  const [auth, setAuth] = useAtom(authAtom);
+
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null
   );
@@ -32,10 +37,8 @@ function Header() {
     null
   );
 
-  const [age, setAge] = React.useState("");
-
   const handleChange = (event: SelectChangeEvent) => {
-    setAge(event.target.value);
+    setAuth(event.target.value as Auth);
   };
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -75,15 +78,22 @@ function Header() {
             WiseBirds
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-            {navItems.map((page) => (
+            <Button
+              key="캠페인"
+              onClick={handleCloseNavMenu}
+              sx={{ my: 2, color: "white", display: "block" }}
+            >
+              캠페인
+            </Button>
+            {auth === "admin" && (
               <Button
-                key={page}
+                key="사용자"
                 onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: "white", display: "block" }}
               >
-                {page}
+                사용자
               </Button>
-            ))}
+            )}
           </Box>
 
           <Box sx={{ flexGrow: 0, display: { xs: "none", md: "flex" } }}>
@@ -124,15 +134,12 @@ function Header() {
               <Select
                 labelId="demo-select-small-label"
                 id="demo-select-small"
-                value={age}
+                value={auth}
                 onChange={handleChange}
               >
-                <MenuItem value="">
-                  <em>None</em>
-                </MenuItem>
-                <MenuItem value={10}>어드민</MenuItem>
-                <MenuItem value={20}>매니저</MenuItem>
-                <MenuItem value={30}>뷰어</MenuItem>
+                <MenuItem value="admin">어드민</MenuItem>
+                <MenuItem value="manager">매니저</MenuItem>
+                <MenuItem value="viewer">뷰어</MenuItem>
               </Select>
             </FormControl>
           </Box>

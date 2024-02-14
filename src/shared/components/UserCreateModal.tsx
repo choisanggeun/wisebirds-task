@@ -13,10 +13,11 @@ import {
 } from "@mui/material";
 import { useAtom } from "jotai";
 import React from "react";
-import { userModifyModalOpenAtom } from "../atoms/userModifyModalOpen.atom";
+
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Close from "@mui/icons-material/Close";
+import { userModifyModalOpenAtom } from "../atoms/userModifyModalOpen.atom";
 const style = {
   position: "absolute" as "absolute",
   top: "50%",
@@ -34,7 +35,7 @@ const style = {
   pb: 3,
 };
 
-function UserModifyModal() {
+function UserCreateModal() {
   const [open, setOpen] = useAtom(userModifyModalOpenAtom);
 
   const [showPassword, setShowPassword] = React.useState(false);
@@ -137,4 +138,4 @@ function UserModifyModal() {
   );
 }
 
-export default UserModifyModal;
+export default UserCreateModal;
