@@ -1,0 +1,9 @@
+{
+  "id": 1,
+  "email": "nuckcho@naver.com",
+  "name": "최상근",
+  "company": {
+    "id": 1,
+    "name": "와이즈버즈"
+  }
+}

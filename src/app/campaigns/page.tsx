@@ -1,25 +1,33 @@
 import CampaignsTableRow from "@/shared/components/CampaignsTableRow";
+import CustomPagination from "@/shared/components/CustomPagination";
 import { gatAllCampaigns } from "@/shared/service/campaigns";
 import {
-  Pagination,
-  Stack,
   Table,
   TableBody,
   TableCell,
   TableContainer,
-  TableFooter,
   TableHead,
   TableRow,
 } from "@mui/material";
 import React from "react";
 
-async function CampaignsPage() {
-  const data = await gatAllCampaigns();
+interface SearchParamsProps {
+  searchParams: {
+    page: string;
+  };
+}
+
+async function CampaignsPage({ searchParams }: SearchParamsProps) {
+  const pageNumber = Number(searchParams.page ?? 1);
+  const data = await gatAllCampaigns(pageNumber);
 
   return (
     <>
       <TableContainer>
-        <Table sx={{ minWidth: 500 }} aria-label="custom pagination table">
+        <Table
+          sx={{ minWidth: 500, width: "100%" }}
+          aria-label="custom pagination table"
+        >
           <TableHead>
             <TableRow>
               <TableCell align="center">상태</TableCell>
@@ -33,18 +41,13 @@ async function CampaignsPage() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.content.map((row) => (
+            {data?.content.map((row) => (
               <CampaignsTableRow key={row.id} row={row} />
             ))}
           </TableBody>
-          <TableFooter>
-            <TableRow></TableRow>
-          </TableFooter>
         </Table>
       </TableContainer>
-      <Stack spacing={2}>
-        <Pagination count={4} showFirstButton showLastButton />
-      </Stack>
+      <CustomPagination count={data.total_pages} page={pageNumber} />
     </>
   );
 }

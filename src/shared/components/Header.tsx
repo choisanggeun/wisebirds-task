@@ -6,7 +6,6 @@ import {
   Button,
   Container,
   FormControl,
-  IconButton,
   Menu,
   MenuItem,
   Select,
@@ -17,11 +16,18 @@ import {
 import { useAtom } from "jotai";
 import React from "react";
 import { authAtom } from "../atoms/auth.atom";
-import { Auth } from "../type/Auth";
+import { Auth, AuthMe } from "../type/Auth";
+import { usePathname } from "next/navigation";
 
-function Header() {
+interface HeaderProps {
+  authMe: AuthMe;
+}
+
+function Header({ authMe }: HeaderProps) {
+  const pathName = usePathname();
+  const pathMainName = pathName.split("/")[1];
+
   const [auth, setAuth] = useAtom(authAtom);
-
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
   );
@@ -62,16 +68,33 @@ function Header() {
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             <Button
               key="캠페인"
-              sx={{ my: 2, color: "white", display: "block" }}
+              sx={{
+                my: 2,
+                color: "white",
+                display: "block",
+                textAlign: "center",
+                backgroundColor:
+                  pathMainName === "campaigns"
+                    ? "rgba(255, 255, 255, 0.1)"
+                    : "transparent",
+              }}
               href="/campaigns"
             >
               캠페인
             </Button>
-
             {auth === "admin" && (
               <Button
                 key="사용자"
-                sx={{ my: 2, color: "white", display: "block" }}
+                sx={{
+                  my: 2,
+                  color: "white",
+                  display: "block",
+                  textAlign: "center",
+                  backgroundColor:
+                    pathMainName === "users"
+                      ? "rgba(255, 255, 255, 0.1)"
+                      : "transparent",
+                }}
                 href="/users"
               >
                 사용자
@@ -80,12 +103,15 @@ function Header() {
           </Box>
 
           <Box sx={{ flexGrow: 0, display: { xs: "none", md: "flex" } }}>
-            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-              asdasdasdas
-            </IconButton>
+            <Typography
+              onClick={handleOpenUserMenu}
+              sx={{ pr: "20px", cursor: "pointer" }}
+            >
+              {authMe.email}
+            </Typography>
 
             <Menu
-              sx={{ mt: "45px" }}
+              sx={{ mt: "40px" }}
               id="menu-appbar"
               anchorEl={anchorElUser}
               anchorOrigin={{
@@ -100,7 +126,11 @@ function Header() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              dsasda
+              <Box sx={{ p: 1, textAlign: "center" }}>
+                <Typography sx={{ p: 1 }}>{authMe.name}</Typography>
+                <Typography sx={{ p: 1 }}>{authMe.email}</Typography>
+                <Typography sx={{ p: 1 }}>{authMe.company.name}</Typography>
+              </Box>
             </Menu>
           </Box>
           <Box sx={{ flexGrow: 0 }}>

@@ -1,13 +1,10 @@
-"use client";
-
-import { Switch, TableCell, TableRow } from "@mui/material";
+import { TableCell, TableRow } from "@mui/material";
 import React from "react";
 import parseCampaignObject from "../utils/parseCampaignObject";
 import { formatNumberWithCommas } from "../utils/formatNumberWithCommas";
 import { CampaignsContent } from "../type/Campaigns";
 import { formatPercentage } from "../utils/formatPercentage";
-
-const label = { inputProps: { "aria-label": "Switch demo" } };
+import CampaignsStatusCell from "./CampaignsStatusCell";
 
 interface CampaignsTableRowProps {
   row: CampaignsContent;
@@ -17,7 +14,7 @@ function CampaignsTableRow({ row }: CampaignsTableRowProps) {
   return (
     <TableRow key={row.id}>
       <TableCell align="center">
-        <Switch {...label} checked={row.enabled} />
+        <CampaignsStatusCell row={row} />
       </TableCell>
       <TableCell align="left">{row.name}</TableCell>
       <TableCell align="left">
