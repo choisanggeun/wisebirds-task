@@ -1,5 +1,7 @@
 "use client";
 
+import { userCreateModalValueAtom } from "@/shared/atoms/userCreateModalValue.atom";
+import { validateUserCreateAtom } from "@/shared/atoms/validateUserCreate.atom";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import {
   FormControl,
@@ -9,9 +11,17 @@ import {
   InputAdornment,
   InputLabel,
 } from "@mui/material";
+import { useAtom, useAtomValue } from "jotai";
 import React from "react";
 
 function PasswordConfirmCreateFormControl() {
+  const validationMessage = useAtomValue(validateUserCreateAtom);
+  const [value, setValue] = useAtom(userCreateModalValueAtom);
+
+  const onChangeValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setValue({ ...value, repeat_password: e.target.value });
+  };
+
   const [showPasswordConfirm, setShowPasswordConfirm] = React.useState(false);
   const handleClickShowPasswordConfirm = () =>
     setShowPasswordConfirm((show) => !show);
@@ -22,7 +32,11 @@ function PasswordConfirmCreateFormControl() {
   };
 
   return (
-    <FormControl sx={{ m: 1, width: "500px" }} variant="standard" error>
+    <FormControl
+      sx={{ m: 1, width: "500px" }}
+      variant="standard"
+      error={validationMessage.repeat_password !== ""}
+    >
       <InputLabel htmlFor="standard-adornment-password">
         비밀번호 확인
       </InputLabel>
@@ -30,6 +44,8 @@ function PasswordConfirmCreateFormControl() {
         required
         id="standard-adornment-password"
         type={showPasswordConfirm ? "text" : "password"}
+        value={value.repeat_password}
+        onChange={onChangeValue}
         endAdornment={
           <InputAdornment position="end">
             <IconButton
@@ -42,7 +58,11 @@ function PasswordConfirmCreateFormControl() {
           </InputAdornment>
         }
       />
-      <FormHelperText id="my-helper-text">error message</FormHelperText>
+      {validationMessage.repeat_password && (
+        <FormHelperText id="my-helper-text">
+          {validationMessage.repeat_password}
+        </FormHelperText>
+      )}
     </FormControl>
   );
 }

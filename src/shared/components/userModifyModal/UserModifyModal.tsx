@@ -1,23 +1,16 @@
 "use client";
 
-import {
-  Box,
-  Button,
-  FormControl,
-  IconButton,
-  Input,
-  InputAdornment,
-  InputLabel,
-  Modal,
-  Typography,
-} from "@mui/material";
-import { useAtom } from "jotai";
-import React from "react";
+import { Box, Button, IconButton, Modal, Typography } from "@mui/material";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import React, { useEffect } from "react";
 import { userModifyModalOpenAtom } from "../../atoms/userModifyModalOpen.atom";
 import Close from "@mui/icons-material/Close";
-import NameFormControl from "./NameModifyFormControl";
 import IdModifyFormControl from "./IdModifyFormControl";
 import NameModifyFormControl from "./NameModifyFormControl";
+import { userModifyModalSelectUserAtom } from "@/shared/atoms/userModifyModalSelectUser.atom";
+import { validateUserModifyAtom } from "@/shared/atoms/validateUserModify.atom";
+import { validateName } from "@/shared/utils/validateModifyUser";
+import { modifyUser } from "@/shared/service/user";
 
 const style = {
   position: "absolute" as "absolute",
@@ -38,10 +31,30 @@ const style = {
 
 function UserModifyModal() {
   const [open, setOpen] = useAtom(userModifyModalOpenAtom);
+  const userInfo = useAtomValue(userModifyModalSelectUserAtom);
+  const setValidationMessage = useSetAtom(validateUserModifyAtom);
 
   const handleClose = () => {
     setOpen(false);
   };
+
+  const onClickSaveButton = async () => {
+    if (userInfo.name === "") {
+      setValidationMessage("이름을 입력하세요");
+    } else if (validateName(userInfo.name)) {
+      console.log(userInfo.name, "userInfo.name");
+      setValidationMessage(
+        "이름을 올바르게 입력하세요(숫자, 특수문자,공백 입력 불가)"
+      );
+    } else {
+      setValidationMessage("");
+      await modifyUser(userInfo.id, userInfo.name);
+    }
+  };
+
+  useEffect(() => {
+    return () => setValidationMessage("");
+  }, [open, setValidationMessage]);
 
   return (
     <Modal
@@ -57,16 +70,20 @@ function UserModifyModal() {
           <Typography id="modal-modal-title" variant="h5" component="h2">
             사용자 수정
           </Typography>
-          <IconButton aria-label="close">
+          <IconButton aria-label="close" onClick={handleClose}>
             <Close />
           </IconButton>
         </Box>
 
+        <IdModifyFormControl id={userInfo.id} />
         <NameModifyFormControl />
-        <IdModifyFormControl />
         <Box sx={{ display: "flex", gap: "10px", justifyContent: "center" }}>
-          <Button variant="outlined">취소</Button>
-          <Button variant="contained">수정</Button>
+          <Button variant="outlined" onClick={handleClose}>
+            취소
+          </Button>
+          <Button variant="contained" onClick={onClickSaveButton}>
+            수정
+          </Button>
         </Box>
       </Box>
     </Modal>

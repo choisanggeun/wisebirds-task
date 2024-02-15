@@ -1,7 +1,5 @@
 import React from "react";
 import {
-  Pagination,
-  Stack,
   Table,
   TableBody,
   TableCell,
@@ -14,9 +12,18 @@ import UsersTableRow from "@/shared/components/UsersTableRow";
 import UserModifyModal from "@/shared/components/userModifyModal/UserModifyModal";
 import UserCreateModal from "@/shared/components/userCreateModal/UserCreateModal";
 import AddUserButton from "@/shared/components/AddUserButton";
+import CustomPagination from "@/shared/components/CustomPagination";
 
-async function UsersPage() {
-  const data = await gatAllUsers();
+interface SearchParamsProps {
+  searchParams: {
+    page: string;
+  };
+}
+
+async function UsersPage({ searchParams }: SearchParamsProps) {
+  const pageNumber = Number(searchParams.page ?? 1);
+  const data = await gatAllUsers(pageNumber);
+
   return (
     <>
       <AddUserButton />
@@ -37,9 +44,11 @@ async function UsersPage() {
           </TableBody>
         </Table>
       </TableContainer>
-      <Stack spacing={2}>
-        <Pagination count={4} showFirstButton showLastButton />
-      </Stack>
+      <CustomPagination
+        totalCount={data.total_pages}
+        page={pageNumber}
+        pageName="users"
+      />
       <UserModifyModal />
       <UserCreateModal />
     </>

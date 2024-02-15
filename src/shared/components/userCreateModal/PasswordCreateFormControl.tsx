@@ -1,5 +1,7 @@
 "use client";
 
+import { userCreateModalValueAtom } from "@/shared/atoms/userCreateModalValue.atom";
+import { validateUserCreateAtom } from "@/shared/atoms/validateUserCreate.atom";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import {
   FormControl,
@@ -9,9 +11,17 @@ import {
   InputAdornment,
   InputLabel,
 } from "@mui/material";
+import { useAtom, useAtomValue } from "jotai";
 import React from "react";
 
 function PasswordCreateFormControl() {
+  const validationMessage = useAtomValue(validateUserCreateAtom);
+  const [value, setValue] = useAtom(userCreateModalValueAtom);
+
+  const onChangeValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setValue({ ...value, password: e.target.value });
+  };
+
   const [showPassword, setShowPassword] = React.useState(false);
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (
@@ -21,11 +31,17 @@ function PasswordCreateFormControl() {
   };
 
   return (
-    <FormControl sx={{ m: 1, width: "500px" }} variant="standard" error>
+    <FormControl
+      sx={{ m: 1, width: "500px" }}
+      variant="standard"
+      error={validationMessage.password !== ""}
+    >
       <InputLabel htmlFor="standard-adornment-password">비밀번호</InputLabel>
       <Input
         id="standard-adornment-password"
         type={showPassword ? "text" : "password"}
+        value={value.password}
+        onChange={onChangeValue}
         endAdornment={
           <InputAdornment position="end">
             <IconButton
@@ -38,7 +54,11 @@ function PasswordCreateFormControl() {
           </InputAdornment>
         }
       />
-      <FormHelperText id="my-helper-text">error message</FormHelperText>
+      {validationMessage.password && (
+        <FormHelperText id="my-helper-text">
+          {validationMessage.password}
+        </FormHelperText>
+      )}
     </FormControl>
   );
 }

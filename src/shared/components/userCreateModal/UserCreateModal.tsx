@@ -2,13 +2,22 @@
 
 import { Box, Button, IconButton, Modal, Typography } from "@mui/material";
 import { useAtom } from "jotai";
-import React from "react";
+import React, { useEffect } from "react";
 import Close from "@mui/icons-material/Close";
 import { userCreateModalOpenAtom } from "../../atoms/userCreateModalOpen.atom";
 import IdCreateFormControl from "./IdCreateFormControl";
 import NameCreateFormControl from "./NameCreateFormControl";
 import PasswordCreateFormControl from "./PasswordCreateFormControl";
 import PasswordConfirmCreateFormControl from "./PasswordConfirmCreateFormControl";
+import { validateUserCreateAtom } from "@/shared/atoms/validateUserCreate.atom";
+import { userCreateModalValueAtom } from "@/shared/atoms/userCreateModalValue.atom";
+import {
+  validateConfirmPassword,
+  validateEmail,
+  validateName,
+  validatePassword,
+} from "@/shared/utils/validateCreateUser";
+import { createUser } from "@/shared/service/user";
 
 const style = {
   position: "absolute" as "absolute",
@@ -29,10 +38,57 @@ const style = {
 
 function UserCreateModal() {
   const [open, setOpen] = useAtom(userCreateModalOpenAtom);
+  const [value, setValue] = useAtom(userCreateModalValueAtom);
+  const [validationMessage, setValidationMessage] = useAtom(
+    validateUserCreateAtom
+  );
 
   const handleClose = () => {
     setOpen(false);
   };
+
+  const onClickCreateButton = async () => {
+    const emailValidationMessage = await validateEmail(value.email);
+    const passwordValidationMessage = validatePassword(value.password);
+    const passwordConfirmValidationMessage = validateConfirmPassword(
+      value.password,
+      value.repeat_password
+    );
+    const nameValidationMessage = validateName(value.name);
+    if (
+      emailValidationMessage ||
+      passwordValidationMessage ||
+      passwordConfirmValidationMessage ||
+      nameValidationMessage
+    ) {
+      setValidationMessage({
+        name: nameValidationMessage,
+        email: emailValidationMessage,
+        password: passwordValidationMessage,
+        repeat_password: passwordConfirmValidationMessage,
+      });
+    } else {
+      setValidationMessage({
+        email: "",
+        password: "",
+        repeat_password: "",
+        name: "",
+      });
+      createUser(value);
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      setValue({ email: "", password: "", repeat_password: "", name: "" });
+      setValidationMessage({
+        email: "",
+        password: "",
+        repeat_password: "",
+        name: "",
+      });
+    };
+  }, [open, setValidationMessage, setValue]);
 
   return (
     <Modal
@@ -46,7 +102,7 @@ function UserCreateModal() {
           <Typography id="modal-modal-title" variant="h6" component="h2">
             사용자 생성
           </Typography>
-          <IconButton aria-label="close">
+          <IconButton aria-label="close" onClick={handleClose}>
             <Close />
           </IconButton>
         </Box>
@@ -55,8 +111,12 @@ function UserCreateModal() {
         <PasswordConfirmCreateFormControl />
         <NameCreateFormControl />
         <Box sx={{ display: "flex", gap: "10px", justifyContent: "center" }}>
-          <Button variant="outlined">취소</Button>
-          <Button variant="contained">생성</Button>
+          <Button variant="outlined" onClick={handleClose}>
+            취소
+          </Button>
+          <Button variant="contained" onClick={onClickCreateButton}>
+            생성
+          </Button>
         </Box>
       </Box>
     </Modal>

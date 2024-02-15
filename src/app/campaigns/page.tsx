@@ -47,7 +47,11 @@ async function CampaignsPage({ searchParams }: SearchParamsProps) {
           </TableBody>
         </Table>
       </TableContainer>
-      <CustomPagination count={data.total_pages} page={pageNumber} />
+      <CustomPagination
+        totalCount={data.total_pages}
+        page={pageNumber}
+        pageName="campaigns"
+      />
     </>
   );
 }

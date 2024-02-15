@@ -5,6 +5,7 @@ import { Button, TableCell, TableRow } from "@mui/material";
 import { UsersContent } from "../type/Users";
 import { useSetAtom } from "jotai";
 import { userModifyModalOpenAtom } from "../atoms/userModifyModalOpen.atom";
+import { userModifyModalSelectUserAtom } from "../atoms/userModifyModalSelectUser.atom";
 
 interface UserTableRowProps {
   row: UsersContent;
@@ -12,9 +13,12 @@ interface UserTableRowProps {
 
 function UsersTableRow({ row }: UserTableRowProps) {
   const setOpenModal = useSetAtom(userModifyModalOpenAtom);
+  const setUserInfo = useSetAtom(userModifyModalSelectUserAtom);
   const handleOpen = () => {
+    setUserInfo({ id: row.email, name: row.name });
     setOpenModal(true);
   };
+
   return (
     <TableRow key={row.id}>
       <TableCell align="left">{row.email}</TableCell>
