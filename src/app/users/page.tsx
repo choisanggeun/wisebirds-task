@@ -1,25 +1,25 @@
 import React from "react";
 import {
-  Box,
-  Modal,
+  Pagination,
+  Stack,
   Table,
   TableBody,
   TableCell,
   TableContainer,
-  TableFooter,
   TableHead,
   TableRow,
-  Typography,
 } from "@mui/material";
 import { gatAllUsers } from "@/shared/service/users";
 import UsersTableRow from "@/shared/components/UsersTableRow";
-import UserModifyModal from "@/shared/components/UserModifyModal";
-import UserCreateModal from "@/shared/components/UserCreateModal";
+import UserModifyModal from "@/shared/components/userModifyModal/UserModifyModal";
+import UserCreateModal from "@/shared/components/userCreateModal/UserCreateModal";
+import AddUserButton from "@/shared/components/AddUserButton";
 
 async function UsersPage() {
   const data = await gatAllUsers();
   return (
     <>
+      <AddUserButton />
       <TableContainer>
         <Table sx={{ minWidth: 500 }} aria-label="custom pagination table">
           <TableHead>
@@ -35,11 +35,11 @@ async function UsersPage() {
               <UsersTableRow key={row.id} row={row} />
             ))}
           </TableBody>
-          <TableFooter>
-            <TableRow></TableRow>
-          </TableFooter>
         </Table>
       </TableContainer>
+      <Stack spacing={2}>
+        <Pagination count={4} showFirstButton showLastButton />
+      </Stack>
       <UserModifyModal />
       <UserCreateModal />
     </>

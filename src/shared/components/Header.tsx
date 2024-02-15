@@ -5,34 +5,23 @@ import {
   Box,
   Button,
   Container,
-  Divider,
   FormControl,
   IconButton,
-  InputLabel,
-  List,
-  ListItem,
   Menu,
   MenuItem,
   Select,
   SelectChangeEvent,
   Toolbar,
-  Tooltip,
   Typography,
 } from "@mui/material";
 import { useAtom } from "jotai";
-
 import React from "react";
 import { authAtom } from "../atoms/auth.atom";
 import { Auth } from "../type/Auth";
 
-const navItems = ["캠페인", "사용자"];
-
 function Header() {
   const [auth, setAuth] = useAtom(authAtom);
 
-  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
-    null
-  );
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
   );
@@ -41,15 +30,8 @@ function Header() {
     setAuth(event.target.value as Auth);
   };
 
-  const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElNav(event.currentTarget);
-  };
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
-  };
-
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
   };
 
   const handleCloseUserMenu = () => {
@@ -64,7 +46,6 @@ function Header() {
             variant="h6"
             noWrap
             component="a"
-            href="#app-bar-with-responsive-menu"
             sx={{
               mr: 2,
               display: { xs: "none", md: "flex" },
@@ -77,19 +58,21 @@ function Header() {
           >
             WiseBirds
           </Typography>
+
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             <Button
               key="캠페인"
-              onClick={handleCloseNavMenu}
               sx={{ my: 2, color: "white", display: "block" }}
+              href="/campaigns"
             >
               캠페인
             </Button>
+
             {auth === "admin" && (
               <Button
                 key="사용자"
-                onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: "white", display: "block" }}
+                href="/users"
               >
                 사용자
               </Button>
